@@ -1515,21 +1515,7 @@ function submitCrisis() {
 ───────────────────────────────────────── */
 let chatOpen = false, chatHistory = [], isTyping = false;
 
-const SAGE_SYSTEM = `You are Sage, a warm and empathetic AI wellness companion on the Serenity mental health platform. Your role is to:
 
-- Listen with compassion and without judgment
-- Provide emotional support and validation
-- Offer evidence-based coping strategies (breathing, grounding, journaling prompts, mindfulness)
-- Gently encourage users to use Serenity's features: mood tracker, GAD-7/PHQ-9 assessments, breathing exercises, journal
-- Know about PHQ-9 (depression screening, 9 questions, 0-27 scale) and GAD-7 (anxiety screening, 7 questions, 0-21 scale)
-- Refer to crisis resources when needed (iCall India: 9152987821, emergency: 112)
-- NEVER diagnose, prescribe, or replace professional mental health care
-- Always encourage professional help for serious concerns
-- Keep responses concise and warm — 2-4 sentences unless more detail is genuinely needed
-- Use gentle, supportive language. Avoid clinical jargon.
-- If someone is in crisis, provide crisis line numbers immediately.
-
-You are NOT a therapist. You are a supportive first point of contact. Always recommend professional help for serious issues.`;
 
 function toggleChat() {
   chatOpen = !chatOpen;
@@ -1541,11 +1527,30 @@ function toggleChat() {
   if (chatOpen) document.getElementById('chat-input').focus();
 }
 
+function mdToHtml(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n•/g, '<br>•')
+    .replace(/\n/g, '<br>');
+}
+
 function addBotMessage(text) {
   const msgs = document.getElementById('chat-messages');
   const div = document.createElement('div');
   div.className = 'chat-msg bot';
   div.innerHTML = `<div class="msg-avatar">🌿</div><div><div class="msg-bubble">${text}</div><div class="msg-time">${now12()}</div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({ role: 'assistant', content: text });
+}
+
+function addBotMessageMarkdown(text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg bot';
+  div.innerHTML = `<div class="msg-avatar">🌿</div><div><div class="msg-bubble">${mdToHtml(text)}</div><div class="msg-time">${now12()}</div></div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   chatHistory.push({ role: 'assistant', content: text });
@@ -1574,6 +1579,163 @@ function hideTyping() {
   if (el) el.remove();
 }
 
+/* ── SAGE RESPONSE ENGINE (client-side, no API needed) ── */
+const SAGE_RESPONSES = {
+  crisis: {
+    triggers: ['suicide', 'kill myself', 'end my life', 'want to die', 'self harm', 'hurt myself', 'not worth living', 'no reason to live', 'end it all', 'hopeless and', 'give up on life'],
+    responses: [
+      "💙 I hear you, and I'm so glad you reached out. What you're feeling right now is real, and you don't have to carry it alone. Please contact iCall right now: **9152987821** (available 24/7). If you're in immediate danger, call **112**. You matter deeply.",
+      "💙 Thank you for telling me this. Please reach out to a crisis counsellor right now — iCall: **9152987821** (24/7, free, confidential). You are not alone, and help is just one call away. If you're in immediate danger, please call **112**."
+    ]
+  },
+  anxious: {
+    triggers: ['anxious', 'anxiety', 'panic', 'panicking', 'worried', 'worry', 'nervous', 'on edge', 'heart racing', 'cant breathe', "can't breathe", 'overwhelmed', 'stressed', 'stress', 'freaking out', 'scared'],
+    responses: [
+      "I can hear that you're feeling anxious right now — that's really tough. Let's slow things down together. Try this: breathe in for 4 counts, hold for 4, out for 4. You can also use our **Breathing** section above for a guided session. 🌬️ Would you like to talk about what's triggering this?",
+      "Anxiety can feel so consuming, especially in the moment. You're not alone in this. One thing that often helps is grounding — name 5 things you can see right now. 👁️ Our **GAD-7 assessment** can also help you understand your anxiety patterns. What's been weighing on you?",
+      "That sounds really hard. When anxiety hits, your body is in 'protect' mode — which is exhausting. The **4-7-8 breathing** in our Breathing section is particularly good for calming the nervous system quickly. What's been going on for you lately?",
+      "I'm here with you. Anxiety often feels worse when we're alone with it. Try pressing your feet firmly into the floor and taking three slow breaths — it signals safety to your brain. 🌿 What's been on your mind?"
+    ]
+  },
+  sad: {
+    triggers: ['sad', 'depressed', 'depression', 'crying', 'cry', 'unhappy', 'miserable', 'low', 'down', 'feel nothing', 'numb', 'empty', 'lonely', 'alone', 'hopeless', 'worthless', 'useless', 'no energy', 'tired all the time', 'exhausted'],
+    responses: [
+      "I'm really sorry you're feeling this way. Depression and low mood can make everything feel heavy and colourless — and that's not a weakness, it's something that needs care. 💚 Our **PHQ-9 assessment** can help measure how you're feeling. Would you also like to try writing about it in the **Journal**?",
+      "What you're describing sounds really painful, and I want you to know it makes complete sense to feel this way. Low mood often thrives in silence — talking about it (even here) is already an act of courage. 🌿 If this has been going on for more than two weeks, please do speak with a doctor. Would you like to tell me more?",
+      "I hear you. Feeling low and empty is one of the hardest things to sit with. You reached out today — that matters. Our **PHQ-9 screening** can help you understand your symptoms, and our **Journal** has prompts for when words are hard to find. How long have you been feeling this way?",
+      "That sounds exhausting to carry. Please know that what you're feeling is valid, and support is available. Sometimes logging your mood daily in our **Mood Tracker** reveals patterns you can share with a doctor or therapist. You don't have to figure this out alone. 💚"
+    ]
+  },
+  angry: {
+    triggers: ['angry', 'anger', 'furious', 'rage', 'frustrated', 'frustrating', 'annoyed', 'irritated', 'hate', 'fed up', 'cant take it', "can't take it"],
+    responses: [
+      "Anger is a completely valid emotion — it's often telling us something important about our needs or boundaries. 🌬️ When it feels intense, **box breathing** (4 counts in, hold, out, hold) can help regulate your nervous system. What's been building up for you?",
+      "That frustration sounds really real. Anger often has a deeper emotion underneath it — hurt, fear, or feeling unheard. Our **Journal** is a great place to unpack it without judgment. What's been going on?"
+    ]
+  },
+  sleep: {
+    triggers: ['cant sleep', "can't sleep", 'insomnia', 'sleep', 'awake at night', 'tired', 'exhausted', 'no sleep', 'waking up', 'nightmares'],
+    responses: [
+      "Poor sleep and mental health are so closely linked — each one affects the other. Our **4-7-8 breathing** technique in the Breathing section is specifically designed to help you fall asleep. 🌙 It works by activating your parasympathetic nervous system. Also try keeping your phone away 30 minutes before bed. What does your bedtime routine look like?",
+      "Sleep struggles can make everything else feel so much harder. The **4-7-8 technique** (inhale 4, hold 7, exhale 8) is worth trying tonight — it's genuinely one of the most evidence-backed sleep tools. 🌿 Is your sleep difficulty about falling asleep, or waking up in the night?"
+    ]
+  },
+  gad7: {
+    triggers: ['gad', 'gad7', 'gad-7', 'anxiety test', 'anxiety assessment', 'anxiety quiz', 'anxiety screening', 'anxiety score', 'test for anxiety', 'check my anxiety'],
+    responses: [
+      "The **GAD-7** (Generalised Anxiety Disorder scale) is a clinically validated 7-question tool used by doctors worldwide to screen for anxiety. It takes about 2 minutes to complete. 📋 Scores range from 0–21: 0–4 is minimal, 5–9 mild, 10–14 moderate, 15+ severe. You can find it in the **Assessments** section on this page — would you like to try it now?",
+      "Great question! The **GAD-7** asks about 7 common anxiety symptoms over the past 2 weeks. It gives you a score from 0–21 that you can share with a healthcare professional. It's not a diagnosis — it's a helpful starting point. Scroll up to the **Assessments** tab to take it! 📋"
+    ]
+  },
+  phq9: {
+    triggers: ['phq', 'phq9', 'phq-9', 'depression test', 'depression assessment', 'depression quiz', 'depression screening', 'depression score', 'test for depression', 'check my depression', 'am i depressed'],
+    responses: [
+      "The **PHQ-9** (Patient Health Questionnaire) is a 9-question depression screening tool used by GPs and mental health clinicians globally. It takes about 3 minutes. 📋 Scores range from 0–27: 0–4 minimal, 5–9 mild, 10–14 moderate, 15–19 moderately severe, 20+ severe. Head to the **Assessments** section on this page to take it. The results can be really helpful to share with a doctor.",
+      "The **PHQ-9** is a really valuable self-screening tool for depression — it was developed by doctors and is widely used in clinical settings. It's 9 questions about how you've been feeling over the last two weeks. You'll find it in our **Assessments** section above. 📋 Would you like to share what's been going on?"
+    ]
+  },
+  breathing: {
+    triggers: ['breathing', 'breathe', 'breath exercise', 'calm down', 'relax', 'meditation', 'mindful', 'mindfulness', 'grounding'],
+    responses: [
+      "Breathing exercises are one of the fastest ways to calm your nervous system. 🌬️ Our **Breathing** section has three techniques: **4-7-8** (great for sleep and acute anxiety), **Box Breathing** (focus and stress), and **5-5 Calm** (gentle everyday use). Try the 4-7-8 right now — scroll up to Breathing. Would you like me to guide you through it here instead?",
+      "Let's try a simple grounding breath together right now. 🌿 Breathe in slowly for 4 counts... hold for 2... and out for 6. Do that 3 times. How does that feel? Our **Breathing** section has full guided sessions with a timer and cycle counter."
+    ]
+  },
+  journal: {
+    triggers: ['journal', 'journaling', 'write', 'writing', 'diary', 'express myself', 'dont know how to feel', "don't know how to feel", 'cant explain', "can't explain"],
+    responses: [
+      "Journaling is a powerful tool for processing emotions — research shows it reduces stress and helps you gain clarity. 📓 Our **Journal** section has guided prompts if you're not sure where to start: gratitude, self-compassion, reflection, growth, and intention-setting. Even 5 minutes a day makes a real difference. Would you like a prompt to get you started right now?",
+      "Writing can help untangle what's swirling inside. 📓 Here's a prompt to try in our Journal: *'What emotion am I carrying right now, and where do I feel it in my body?'* There's no right or wrong answer — just honest, private reflection. The Journal section above keeps everything saved securely."
+    ]
+  },
+  mood: {
+    triggers: ['mood', 'mood tracker', 'log mood', 'track my mood', 'mood log', 'mood pattern', 'emotions'],
+    responses: [
+      "Tracking your mood daily is one of the simplest and most powerful things you can do for your mental health. 📊 Our **Mood Tracker** lets you log how you're feeling with a note, and it builds a visual chart of your patterns over time — revealing things you might not notice day-to-day. What mood are you in right now?",
+      "Mood tracking is brilliant for spotting patterns — like noticing your mood consistently dips on certain days or after certain events. 📊 The **Mood Tracker** section lets you log and look back. Have you tried it yet?"
+    ]
+  },
+  gratitude: {
+    triggers: ['grateful', 'gratitude', 'thankful', 'positive', 'better today', 'good day', 'happy', 'great', 'wonderful', 'amazing'],
+    responses: [
+      "That's wonderful to hear! 🌟 Gratitude is one of the most research-backed practices for wellbeing. Even on hard days, noticing small positive moments can rewire how the brain processes experiences. Try writing three things you're grateful for today in the **Journal** to anchor this feeling.",
+      "I love hearing that. 🌿 Holding onto positive moments matters — your brain needs reminders that good things exist. You might like to log this mood in the **Mood Tracker** so you can look back on it during harder days."
+    ]
+  },
+  hello: {
+    triggers: ['hello', 'hi', 'hey', 'hiya', 'good morning', 'good afternoon', 'good evening', 'howdy', 'namaste', 'how are you', 'whats up', "what's up"],
+    responses: [
+      "Hello! 🌿 I'm Sage, your wellness companion. I'm here to listen, support, and help you navigate whatever you're going through — no judgment, just care. How are you feeling today?",
+      "Hey there 🌿 It's good to hear from you. I'm Sage — here to support your mental wellbeing. Whether you want to vent, need coping strategies, or have questions about our assessments (GAD-7, PHQ-9), I'm all ears. What's on your mind?",
+      "Namaste 🙏 I'm Sage, your Serenity companion. How are you feeling right now — physically and emotionally? There's no right or wrong answer here."
+    ]
+  },
+  help: {
+    triggers: ['help', 'what can you do', 'what do you do', 'how does this work', 'features', 'about serenity', 'tell me about'],
+    responses: [
+      "I'm Sage, your AI wellness companion on Serenity. 🌿 Here's how I can help:\n\n• 💬 **Listen** to what you're going through\n• 🧘 Guide **breathing exercises** and coping strategies\n• 📋 Explain the **GAD-7** (anxiety) and **PHQ-9** (depression) assessments\n• 📓 Suggest **journal prompts** for reflection\n• 📊 Talk about **mood tracking** and patterns\n• 🆘 Share **crisis resources** if needed\n\nWhat would you like to explore?",
+    ]
+  },
+  therapy: {
+    triggers: ['therapist', 'therapy', 'counsellor', 'counselor', 'psychologist', 'psychiatrist', 'doctor', 'professional help', 'should i see', 'need help'],
+    responses: [
+      "Seeking professional help is one of the bravest and most important things you can do for your mental health. 💚 A therapist, counsellor, or GP can offer support that goes beyond what I can provide. In India, you can start with your GP, or look for registered therapists on platforms like iCall (9152987821) or Vandrevala Foundation (1860-2662-345). Would you like to talk about what's been going on?",
+      "Absolutely, professional support is incredibly valuable — especially for persistent or severe symptoms. Our **PHQ-9 and GAD-7** scores are a great starting point to share with a doctor. They give clinicians a clear picture of your symptoms. Would you like help understanding those assessments?"
+    ]
+  },
+  thanks: {
+    triggers: ['thank you', 'thanks', 'helpful', 'that helped', 'appreciate', 'thats great', "that's great", 'perfect', 'awesome'],
+    responses: [
+      "I'm really glad that helped. 🌿 Remember, you can come back here anytime — day or night. You're not alone on this journey. Take good care of yourself.",
+      "You're very welcome. 💚 Taking time to tend to your mental health matters enormously. Is there anything else you'd like to talk about or explore on Serenity?",
+      "It means a lot to hear that. 🌿 Be gentle with yourself today — you're doing better than you think."
+    ]
+  }
+};
+
+const FALLBACK_RESPONSES = [
+  "Thank you for sharing that with me. 🌿 It sounds like you're carrying something important. Could you tell me a little more about what you're going through?",
+  "I hear you. Sometimes it helps just to put words to what we're feeling. What's been on your mind most lately?",
+  "I'm here and I'm listening. 💚 What you're experiencing sounds significant. Would you like to explore some coping strategies, or would you rather just talk through it?",
+  "That's worth sitting with. 🌿 Sometimes our feelings are pointing us toward something we need. Would it help to write this down in the **Journal**, or would you like to explore our **assessments** to better understand what you're feeling?",
+  "I appreciate you trusting me with this. 💚 Mental health journeys are rarely linear — there are ups and downs, and both are okay. What kind of support feels most useful right now: listening, coping tools, or resources?"
+];
+
+let fallbackIndex = 0;
+let messageCount = 0;
+
+function getSageResponse(userText) {
+  const lower = userText.toLowerCase();
+  messageCount++;
+
+  // Check all categories
+  for (const [cat, data] of Object.entries(SAGE_RESPONSES)) {
+    if (data.triggers.some(trigger => lower.includes(trigger))) {
+      const arr = data.responses;
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+  }
+
+  // Check for numbers (could be scale rating)
+  if (/^[0-9]\s*\/\s*10|^[0-9]$/.test(userText.trim())) {
+    const num = parseInt(userText.trim());
+    if (num <= 3) return "A " + num + "/10 — that sounds really low. 💙 I'm glad you're here. Would you like to try our **PHQ-9** assessment to understand your mood better, or would it help to talk through what's been happening?";
+    if (num <= 6) return "A " + num + "/10 — somewhere in the middle. That's worth paying attention to. 🌿 Our **Mood Tracker** can help you spot patterns over time. What's been affecting your mood lately?";
+    return "A " + num + "/10 — that's good to hear! 🌟 What's been contributing to that positive feeling? Capturing it in the **Journal** can help anchor it.";
+  }
+
+  // Rotating thoughtful fallbacks
+  const response = FALLBACK_RESPONSES[fallbackIndex % FALLBACK_RESPONSES.length];
+  fallbackIndex++;
+
+  // After a few exchanges, suggest features
+  if (messageCount > 0 && messageCount % 4 === 0) {
+    return response + "\n\n💡 *You might also find our **GAD-7** or **PHQ-9** assessments helpful — they can put words to what you're feeling and give you something concrete to share with a doctor.*";
+  }
+
+  return response;
+}
+
 async function sendMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
@@ -1584,25 +1746,15 @@ async function sendMessage() {
   isTyping = true;
   document.getElementById('chat-send').disabled = true;
   showTyping();
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SAGE_SYSTEM,
-        messages: chatHistory.filter(m => m.role !== 'system')
-      })
-    });
-    const data = await response.json();
-    hideTyping();
-    const reply = data.content && data.content[0] ? data.content[0].text : "I'm here for you. Could you tell me a little more about what you're going through?";
-    addBotMessage(reply);
-  } catch(err) {
-    hideTyping();
-    addBotMessage("I'm having a little trouble connecting right now, but I'm still here. You can try again in a moment — or use the breathing exercises or journal while you wait. 🌿");
-  }
+
+  // Realistic thinking delay (0.8s–1.8s)
+  const delay = 800 + Math.random() * 1000;
+  await new Promise(r => setTimeout(r, delay));
+
+  hideTyping();
+  const reply = getSageResponse(text);
+  addBotMessageMarkdown(reply);
+
   isTyping = false;
   document.getElementById('chat-send').disabled = false;
   document.getElementById('chat-input').focus();
