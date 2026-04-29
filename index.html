@@ -618,6 +618,7 @@
     <li><a href="#journal" onclick="closeMenu()">Journal</a></li>
     <li><a href="#breathing" onclick="closeMenu()">Breathing</a></li>
     <li><a href="#resources" onclick="closeMenu()">Resources</a></li>
+    <li><a href="#therapists" onclick="closeMenu()">Therapists</a></li>
     <li><a href="#crisis" class="nav-cta" onclick="closeMenu()">Get Help</a></li>
     <li>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
@@ -1019,6 +1020,128 @@
   </div>
 </section>
 
+<!-- FIND A THERAPIST -->
+<section id="therapists" style="background:var(--cream)">
+  <div class="section-wrapper">
+    <div class="fade-up" style="text-align:center">
+      <div class="section-tag lavender" style="justify-content:center">Professional support</div>
+      <h2 class="section-heading">Find a <em>Therapist</em></h2>
+      <p class="section-sub" style="margin:0 auto;text-align:center">Connect with verified mental health professionals for one-on-one video or in-person sessions.</p>
+    </div>
+    <div style="display:flex;justify-content:center;gap:1rem;margin-top:2rem;flex-wrap:wrap" class="fade-up">
+      <button class="assess-tab active" onclick="filterTherapists(this,'all')" style="background:var(--sage);color:white;border:none;padding:0.6rem 1.4rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:600;font-size:0.88rem;cursor:pointer">All</button>
+      <button class="assess-tab" onclick="filterTherapists(this,'anxiety')" style="background:var(--card-bg);color:var(--text-muted);border:2px solid var(--border);padding:0.6rem 1.4rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer">Anxiety</button>
+      <button class="assess-tab" onclick="filterTherapists(this,'depression')" style="background:var(--card-bg);color:var(--text-muted);border:2px solid var(--border);padding:0.6rem 1.4rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer">Depression</button>
+      <button class="assess-tab" onclick="filterTherapists(this,'trauma')" style="background:var(--card-bg);color:var(--text-muted);border:2px solid var(--border);padding:0.6rem 1.4rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:500;font-size:0.88rem;cursor:pointer">Trauma</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.5rem" class="fade-up" id="therapist-grid"></div>
+    <div style="text-align:center;margin-top:3rem" class="fade-up">
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:1rem">Are you a mental health professional?</p>
+      <button onclick="openModal('counsellor-modal')" style="background:transparent;border:2px solid var(--lavender);color:var(--lavender-dark);padding:0.9rem 2rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:600;font-size:0.95rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='var(--lavender)';this.style.color='white'" onmouseout="this.style.background='transparent';this.style.color='var(--lavender-dark)'">Join as a Counsellor →</button>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING MODAL -->
+<div id="booking-modal" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+  <div style="background:var(--card-bg);border-radius:24px;padding:2.5rem;width:90%;max-width:560px;position:relative;max-height:90vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,0.3)">
+    <button onclick="closeModal('booking-modal')" style="position:absolute;top:1rem;right:1rem;background:#555;color:white;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;font-weight:600">X</button>
+    <div id="booking-content"></div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="payment-modal" style="display:none;position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);align-items:center;justify-content:center">
+  <div style="background:#f6f9fc;border-radius:16px;width:95%;max-width:900px;overflow:hidden;box-shadow:0 60px 120px rgba(0,0,0,0.4);display:grid;grid-template-columns:1fr 1fr;min-height:480px">
+    <div style="background:#0a2540;padding:3rem 2.5rem;display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:2rem">
+          <div style="width:40px;height:40px;background:#1a6b4a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem">S</div>
+          <span style="color:rgba(255,255,255,0.7);font-size:0.9rem;font-family:Outfit,sans-serif">Serenity Health</span>
+        </div>
+        <div style="color:rgba(255,255,255,0.6);font-size:0.85rem;font-family:Outfit,sans-serif;margin-bottom:0.5rem" id="pay-session-label">Wellness Session</div>
+        <div style="color:white;font-size:2.8rem;font-weight:700;font-family:Outfit,sans-serif;margin-bottom:0.3rem" id="pay-amount">Rs.2,200.00</div>
+        <div style="color:rgba(255,255,255,0.5);font-size:0.8rem;font-family:Outfit,sans-serif" id="pay-desc">Video session - 50 minutes</div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:1.5rem;margin-top:2rem">
+        <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.6);font-size:0.82rem;font-family:Outfit,sans-serif;margin-bottom:0.5rem"><span>Session fee</span><span id="pay-fee">Rs.2,000</span></div>
+        <div style="display:flex;justify-content:space-between;color:rgba(255,255,255,0.6);font-size:0.82rem;font-family:Outfit,sans-serif;margin-bottom:0.5rem"><span>Platform fee</span><span>Rs.200</span></div>
+        <div style="display:flex;justify-content:space-between;color:white;font-size:0.95rem;font-family:Outfit,sans-serif;font-weight:600;margin-top:0.8rem;padding-top:0.8rem;border-top:1px solid rgba(255,255,255,0.15)"><span>Total</span><span id="pay-total">Rs.2,200</span></div>
+      </div>
+      <div style="margin-top:2rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,0.08);border-radius:4px;padding:0.3rem 0.7rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:Outfit,sans-serif">SSL Secured</div>
+        <div style="background:rgba(255,255,255,0.08);border-radius:4px;padding:0.3rem 0.7rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:Outfit,sans-serif">256-bit encryption</div>
+      </div>
+    </div>
+    <div style="padding:2.5rem;background:#fff;display:flex;flex-direction:column">
+      <button onclick="closeModal('payment-modal')" style="align-self:flex-end;background:#f0f0f0;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:0.9rem;color:#666;margin-bottom:1.5rem">X</button>
+      <div id="pay-form-area">
+        <div style="margin-bottom:1.2rem">
+          <label style="font-size:0.78rem;font-weight:600;color:#555;font-family:Outfit,sans-serif;display:block;margin-bottom:0.4rem;letter-spacing:0.04em;text-transform:uppercase">Email</label>
+          <input id="pay-email" type="email" placeholder="you@example.com" style="width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:0.75rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;outline:none;color:#1a1a2e;background:#fafafa;box-sizing:border-box">
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <label style="font-size:0.78rem;font-weight:600;color:#555;font-family:Outfit,sans-serif;display:block;margin-bottom:0.4rem;letter-spacing:0.04em;text-transform:uppercase">Card Information</label>
+          <div style="border:1.5px solid #e0e0e0;border-radius:8px;overflow:hidden">
+            <input id="pay-card" type="text" placeholder="1234 1234 1234 1234" maxlength="19" oninput="formatCard(this)" style="width:100%;border:none;padding:0.75rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;outline:none;background:#fafafa;box-sizing:border-box">
+            <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid #e0e0e0">
+              <input id="pay-exp" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExp(this)" style="border:none;border-right:1.5px solid #e0e0e0;padding:0.65rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;outline:none;background:#fafafa">
+              <input id="pay-cvc" type="text" placeholder="CVC" maxlength="3" style="border:none;padding:0.65rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;outline:none;background:#fafafa">
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <label style="font-size:0.78rem;font-weight:600;color:#555;font-family:Outfit,sans-serif;display:block;margin-bottom:0.4rem;letter-spacing:0.04em;text-transform:uppercase">Name on card</label>
+          <input id="pay-name" type="text" placeholder="Full name" style="width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:0.75rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;outline:none;color:#1a1a2e;background:#fafafa;box-sizing:border-box">
+        </div>
+        <div style="margin-bottom:1.5rem">
+          <label style="font-size:0.78rem;font-weight:600;color:#555;font-family:Outfit,sans-serif;display:block;margin-bottom:0.4rem;letter-spacing:0.04em;text-transform:uppercase">Country</label>
+          <select style="width:100%;border:1.5px solid #e0e0e0;border-radius:8px;padding:0.75rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;outline:none;color:#1a1a2e;background:#fafafa;box-sizing:border-box">
+            <option>India</option><option>United States</option><option>United Kingdom</option><option>Canada</option>
+          </select>
+        </div>
+        <button onclick="processPayment()" id="pay-btn" style="width:100%;background:#635bff;color:white;border:none;padding:1rem;border-radius:8px;font-family:Outfit,sans-serif;font-weight:600;font-size:1rem;cursor:pointer;margin-bottom:1rem;transition:all 0.2s">Pay <span id="pay-btn-amount">Rs.2,200</span></button>
+        <div style="text-align:center"><span style="font-size:0.72rem;color:#aaa;font-family:Outfit,sans-serif">Powered by </span><span style="font-size:0.78rem;font-weight:700;color:#635bff;font-family:Outfit,sans-serif">stripe</span><span style="color:#ddd;margin:0 0.5rem">|</span><a href="#" style="font-size:0.72rem;color:#aaa;text-decoration:none;font-family:Outfit,sans-serif">Terms</a><span style="color:#ddd;margin:0 0.3rem">|</span><a href="#" style="font-size:0.72rem;color:#aaa;text-decoration:none;font-family:Outfit,sans-serif">Privacy</a></div>
+      </div>
+      <div id="pay-success" style="display:none;text-align:center;padding:2rem 0">
+        <div style="width:72px;height:72px;background:#d4edda;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1.5rem">checkmark</div>
+        <div style="font-family:DM Serif Display,serif;font-size:1.8rem;color:#1a2e1a;margin-bottom:0.5rem">Payment Confirmed!</div>
+        <div style="font-family:Outfit,sans-serif;font-size:0.9rem;color:#555;line-height:1.6;margin-bottom:1.5rem" id="pay-success-msg">Your session has been booked.</div>
+        <div style="background:#f0faf4;border-radius:12px;padding:1.2rem;margin-bottom:1.5rem;text-align:left">
+          <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#1a6b4a;margin-bottom:0.8rem;font-family:Outfit,sans-serif">Booking Details</div>
+          <div id="booking-confirm-details" style="font-size:0.88rem;color:#333;font-family:Outfit,sans-serif;line-height:1.8"></div>
+        </div>
+        <div style="font-size:0.78rem;color:#aaa;font-family:Outfit,sans-serif">Demo only - no real payment processed</div>
+        <button onclick="closeModal('payment-modal')" style="margin-top:1.2rem;background:#1a6b4a;color:white;border:none;padding:0.8rem 2rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:600;cursor:pointer">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COUNSELLOR MODAL -->
+<div id="counsellor-modal" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+  <div style="background:var(--card-bg);border-radius:24px;padding:2.5rem;width:90%;max-width:580px;position:relative;box-shadow:0 40px 80px rgba(0,0,0,0.25)">
+    <button onclick="closeModal('counsellor-modal')" style="position:absolute;top:1rem;right:1rem;background:#333;color:white;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;font-weight:600">X</button>
+    <h2 style="font-family:DM Serif Display,serif;font-size:1.8rem;color:var(--dark);margin-bottom:0.4rem">Join as a Counsellor</h2>
+    <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:1.8rem;line-height:1.6">Help guide others on their wellness journey. Fill out the application below to get started.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Full Name</label><input type="text" placeholder="Dr. Jane Doe" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+      <div><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Specialty Domain</label><input type="text" placeholder="e.g. Schizophrenia Therapist" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+    </div>
+    <div style="margin-bottom:1rem"><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Location</label><input type="text" placeholder="e.g. Amritsar, Punjab" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Management Approach</label><input type="text" placeholder="e.g. Psychosis management" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+      <div><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Primary Diseases Addressed</label><input type="text" placeholder="e.g. Schizophrenia, Bipolar" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.8rem">
+      <div><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Experience</label><input type="text" placeholder="e.g. 5+ Years" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+      <div><label style="font-size:0.8rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:0.4rem">Languages (Comma separated)</label><input type="text" placeholder="e.g. English, Hindi, Punjabi" class="crisis-input" style="width:100%;box-sizing:border-box"></div>
+    </div>
+    <button onclick="submitCounsellorApp()" style="width:100%;background:linear-gradient(135deg,#6B5A9E,#9B8EC4);color:white;border:none;padding:1rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:600;font-size:1rem;cursor:pointer">Submit Application</button>
+  </div>
+</div>
+
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
@@ -1033,7 +1156,7 @@
       </div>
     </div>
     <div class="footer-col"><h4>Features</h4><ul><li><a href="#mood">Mood Tracker</a></li><li><a href="#assessments">PHQ-9 & GAD-7</a></li><li><a href="#journal">Journal</a></li><li><a href="#breathing">Breathing</a></li><li><a href="#resources">Resources</a></li></ul></div>
-    <div class="footer-col"><h4>Support</h4><ul><li><a href="#crisis">Crisis Help</a></li><li><a href="#">Find a Therapist</a></li><li><a href="#">Community Forum</a></li><li><a href="#">FAQ</a></li><li><a href="#">Contact Us</a></li></ul></div>
+    <div class="footer-col"><h4>Support</h4><ul><li><a href="#crisis">Crisis Help</a></li><li><a href="#therapists">Find a Therapist</a></li><li><a href="#">Community Forum</a></li><li><a href="#">FAQ</a></li><li><a href="#">Contact Us</a></li></ul></div>
     <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Serenity</a></li><li><a href="#">Our Approach</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li></ul></div>
   </div>
   <div class="footer-bottom">
@@ -1781,6 +1904,238 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.08 });
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+/* ─────────────────────────────────────────
+   THERAPIST DIRECTORY + BOOKING + PAYMENT
+───────────────────────────────────────── */
+const THERAPISTS = [
+  { id:1, name:"Dr. Kamaljit Kaur", title:"Senior Psychiatrist", specialty:"Anxiety & Depression", location:"Ludhiana, Punjab", exp:"12 Years", lang:"Hindi, Punjabi, English", fee:2200, rating:4.9, reviews:134, avatar:"KK", color:"#6B9E7E", tags:["anxiety","depression"], approach:"CBT & Mindfulness-Based Therapy", avail:"Mon–Fri, 10am–6pm", type:"Video & In-Person" },
+  { id:2, name:"Dr. Arjun Mehta", title:"Clinical Psychologist", specialty:"Trauma & PTSD", location:"Chandigarh, Punjab", exp:"9 Years", lang:"Hindi, English", fee:1800, rating:4.8, reviews:98, avatar:"AM", color:"#7BBDE0", tags:["trauma","anxiety"], approach:"EMDR & Trauma-Focused CBT", avail:"Tue–Sat, 11am–7pm", type:"Video" },
+  { id:3, name:"Dr. Priya Sharma", title:"Counselling Psychologist", specialty:"Depression & Relationships", location:"Amritsar, Punjab", exp:"7 Years", lang:"Hindi, Punjabi, English", fee:1500, rating:4.7, reviews:76, avatar:"PS", color:"#9B8EC4", tags:["depression","trauma"], approach:"Person-Centred & Psychodynamic", avail:"Mon–Thu, 9am–5pm", type:"Video & In-Person" },
+  { id:4, name:"Dr. Rahul Bhatia", title:"Addiction Specialist", specialty:"Substance Use & Recovery", location:"Patiala, Punjab", exp:"14 Years", lang:"Hindi, Punjabi", fee:2500, rating:4.9, reviews:201, avatar:"RB", color:"#E8A87C", tags:["anxiety","depression"], approach:"Motivational Interviewing & CBT", avail:"Mon–Sat, 8am–4pm", type:"In-Person" },
+  { id:5, name:"Dr. Sneha Rao", title:"Child & Adolescent Therapist", specialty:"Youth Mental Health", location:"Jalandhar, Punjab", exp:"8 Years", lang:"Hindi, English, Telugu", fee:1600, rating:4.8, reviews:112, avatar:"SR", color:"#D4788A", tags:["anxiety","depression"], approach:"Play Therapy & Family Systems", avail:"Mon–Fri, 2pm–8pm", type:"Video & In-Person" },
+  { id:6, name:"Dr. Vikram Nair", title:"Neuropsychiatrist", specialty:"Bipolar & Schizophrenia", location:"Mohali, Punjab", exp:"18 Years", lang:"Hindi, English, Malayalam", fee:3000, rating:5.0, reviews:187, avatar:"VN", color:"#3D6B52", tags:["depression","trauma"], approach:"Biological Psychiatry & CBT", avail:"Wed–Sun, 10am–5pm", type:"Video & In-Person" }
+];
+
+let currentTherapist = null;
+let currentTag = "all";
+
+function renderTherapists(tag) {
+  currentTag = tag;
+  const grid = document.getElementById("therapist-grid");
+  const list = tag === "all" ? THERAPISTS : THERAPISTS.filter(t => t.tags.includes(tag));
+  grid.innerHTML = list.map(t => `
+    <div style="background:var(--card-bg);border-radius:20px;padding:1.8rem;box-shadow:var(--shadow);border:2px solid transparent;transition:all 0.3s;cursor:pointer" onmouseover="this.style.borderColor='${t.color}';this.style.transform='translateY(-4px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.borderColor='transparent';this.style.transform='none';this.style.boxShadow='var(--shadow)'">
+      <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.2rem">
+        <div style="width:54px;height:54px;border-radius:50%;background:${t.color};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1rem;flex-shrink:0">${t.avatar}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:1rem;color:var(--dark);font-family:Outfit,sans-serif">${t.name}</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);font-family:Outfit,sans-serif">${t.title}</div>
+          <div style="display:flex;align-items:center;gap:0.3rem;margin-top:0.3rem">
+            <span style="color:#F5A623;font-size:0.75rem">★</span>
+            <span style="font-size:0.8rem;font-weight:600;color:var(--dark);font-family:Outfit,sans-serif">${t.rating}</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);font-family:Outfit,sans-serif">(${t.reviews} reviews)</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem">
+        <span style="background:var(--sage-light);color:var(--sage-dark);font-size:0.72rem;font-weight:600;padding:0.25rem 0.7rem;border-radius:50px;font-family:Outfit,sans-serif">${t.specialty}</span>
+        <span style="background:var(--cream);color:var(--text-muted);font-size:0.72rem;padding:0.25rem 0.7rem;border-radius:50px;font-family:Outfit,sans-serif">${t.type}</span>
+      </div>
+      <div style="font-size:0.82rem;color:var(--text-muted);font-family:Outfit,sans-serif;margin-bottom:0.4rem">📍 ${t.location}</div>
+      <div style="font-size:0.82rem;color:var(--text-muted);font-family:Outfit,sans-serif;margin-bottom:1.2rem">🗣 ${t.lang}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:1rem;border-top:1px solid var(--border)">
+        <div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--dark);font-family:Outfit,sans-serif">₹${t.fee.toLocaleString()}</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);font-family:Outfit,sans-serif">per session</div>
+        </div>
+        <button onclick="openBooking(${t.id})" style="background:${t.color};color:white;border:none;padding:0.65rem 1.3rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">Book Session</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterTherapists(btn, tag) {
+  document.querySelectorAll('[onclick^="filterTherapists"]').forEach(b => {
+    b.style.background = 'var(--card-bg)';
+    b.style.color = 'var(--text-muted)';
+    b.style.border = '2px solid var(--border)';
+  });
+  btn.style.background = 'var(--sage)';
+  btn.style.color = 'white';
+  btn.style.border = 'none';
+  renderTherapists(tag);
+}
+
+function openBooking(id) {
+  currentTherapist = THERAPISTS.find(t => t.id === id);
+  const t = currentTherapist;
+  const slots = ["10:00 AM","11:30 AM","1:00 PM","2:30 PM","4:00 PM","5:30 PM"];
+  document.getElementById("booking-content").innerHTML = `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)">
+      <div style="width:56px;height:56px;border-radius:50%;background:${t.color};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:1.1rem;flex-shrink:0">${t.avatar}</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:var(--dark);font-family:Outfit,sans-serif">${t.name}</div>
+        <div style="font-size:0.85rem;color:var(--text-muted);font-family:Outfit,sans-serif">${t.title} · ${t.specialty}</div>
+        <div style="display:flex;gap:0.3rem;align-items:center;margin-top:0.2rem"><span style="color:#F5A623">★</span><span style="font-size:0.82rem;font-weight:600;font-family:Outfit,sans-serif;color:var(--dark)">${t.rating}</span><span style="font-size:0.8rem;color:var(--text-muted);font-family:Outfit,sans-serif">(${t.reviews} reviews)</span></div>
+      </div>
+    </div>
+    <div style="margin-bottom:1.2rem">
+      <label style="font-size:0.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-family:Outfit,sans-serif;display:block;margin-bottom:0.6rem">Session Type</label>
+      <div style="display:flex;gap:0.8rem">
+        <button id="type-video" onclick="selectType('video',this)" style="flex:1;padding:0.75rem;border:2px solid ${t.color};border-radius:12px;font-family:Outfit,sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;background:${t.color};color:white;transition:all 0.2s">📹 Video Call</button>
+        <button id="type-person" onclick="selectType('person',this)" style="flex:1;padding:0.75rem;border:2px solid var(--border);border-radius:12px;font-family:Outfit,sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;background:var(--cream);color:var(--text-muted);transition:all 0.2s">🏥 In-Person</button>
+      </div>
+    </div>
+    <div style="margin-bottom:1.2rem">
+      <label style="font-size:0.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-family:Outfit,sans-serif;display:block;margin-bottom:0.6rem">Select Date</label>
+      <input type="date" id="book-date" style="width:100%;border:2px solid var(--border);border-radius:12px;padding:0.75rem 1rem;font-family:Outfit,sans-serif;font-size:0.9rem;color:var(--text);background:var(--card-bg);outline:none;box-sizing:border-box" min="${new Date().toISOString().split('T')[0]}">
+    </div>
+    <div style="margin-bottom:1.5rem">
+      <label style="font-size:0.8rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;font-family:Outfit,sans-serif;display:block;margin-bottom:0.6rem">Available Slots</label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem" id="slot-grid">
+        ${slots.map(s => `<button onclick="selectSlot(this,'${s}')" style="padding:0.6rem;border:2px solid var(--border);border-radius:10px;font-family:Outfit,sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;background:var(--cream);color:var(--text-muted);transition:all 0.2s" onmouseover="this.style.borderColor='${t.color}';this.style.color='var(--dark)'" onmouseout="if(!this.classList.contains('chosen')){this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'}">${s}</button>`).join('')}
+      </div>
+    </div>
+    <div style="background:var(--cream);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:Outfit,sans-serif;font-size:0.88rem;color:var(--text-muted)">Session fee (50 min)</div>
+      <div style="font-family:Outfit,sans-serif;font-size:1.1rem;font-weight:700;color:var(--dark)">₹${t.fee.toLocaleString()}</div>
+    </div>
+    <button onclick="goToPayment()" style="width:100%;background:${t.color};color:white;border:none;padding:1rem;border-radius:50px;font-family:Outfit,sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.2s" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Continue to Payment →</button>
+  `;
+  openModal("booking-modal");
+}
+
+let selectedSessionType = "video";
+let selectedSlot = "";
+
+function selectType(type, btn) {
+  selectedSessionType = type;
+  const t = currentTherapist;
+  document.getElementById("type-video").style.background = "var(--cream)";
+  document.getElementById("type-video").style.color = "var(--text-muted)";
+  document.getElementById("type-video").style.borderColor = "var(--border)";
+  document.getElementById("type-person").style.background = "var(--cream)";
+  document.getElementById("type-person").style.color = "var(--text-muted)";
+  document.getElementById("type-person").style.borderColor = "var(--border)";
+  btn.style.background = t.color;
+  btn.style.color = "white";
+  btn.style.borderColor = t.color;
+}
+
+function selectSlot(btn, slot) {
+  selectedSlot = slot;
+  document.querySelectorAll("#slot-grid button").forEach(b => {
+    b.classList.remove("chosen");
+    b.style.background = "var(--cream)";
+    b.style.borderColor = "var(--border)";
+    b.style.color = "var(--text-muted)";
+    b.style.fontWeight = "500";
+  });
+  btn.classList.add("chosen");
+  btn.style.background = currentTherapist.color;
+  btn.style.borderColor = currentTherapist.color;
+  btn.style.color = "white";
+  btn.style.fontWeight = "700";
+}
+
+function goToPayment() {
+  const t = currentTherapist;
+  const dateVal = document.getElementById("book-date").value;
+  if (!dateVal || !selectedSlot) {
+    showToast("Please select a date and time slot", "📅");
+    return;
+  }
+  const sessionDate = new Date(dateVal).toLocaleDateString("en-IN", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+  const sessionLabel = (selectedSessionType === "video" ? "VIDEO" : "IN-PERSON") + " session scheduled for " + sessionDate + " at " + selectedSlot + ".";
+  
+  document.getElementById("pay-session-label").textContent = "Wellness Session with " + t.name;
+  document.getElementById("pay-amount").textContent = "₹" + (t.fee + 200).toLocaleString() + ".00";
+  document.getElementById("pay-fee").textContent = "₹" + t.fee.toLocaleString();
+  document.getElementById("pay-total").textContent = "₹" + (t.fee + 200).toLocaleString();
+  document.getElementById("pay-desc").textContent = sessionLabel;
+  document.getElementById("pay-btn-amount").textContent = "₹" + (t.fee + 200).toLocaleString();
+  document.getElementById("pay-form-area").style.display = "block";
+  document.getElementById("pay-success").style.display = "none";
+
+  closeModal("booking-modal");
+  openModal("payment-modal");
+}
+
+function formatCard(el) {
+  let v = el.value.replace(/\D/g, "").substring(0, 16);
+  el.value = v.replace(/(.{4})/g, "$1 ").trim();
+}
+
+function formatExp(el) {
+  let v = el.value.replace(/\D/g, "").substring(0, 4);
+  if (v.length >= 3) v = v.substring(0, 2) + " / " + v.substring(2);
+  el.value = v;
+}
+
+function processPayment() {
+  const email = document.getElementById("pay-email").value.trim();
+  const card = document.getElementById("pay-card").value.trim();
+  const exp = document.getElementById("pay-exp").value.trim();
+  const cvc = document.getElementById("pay-cvc").value.trim();
+  const name = document.getElementById("pay-name").value.trim();
+
+  if (!email || !card || !exp || !cvc || !name) {
+    showToast("Please fill in all payment fields", "💳");
+    return;
+  }
+  if (card.replace(/\s/g,'').length < 16) { showToast("Please enter a valid 16-digit card number", "💳"); return; }
+
+  const btn = document.getElementById("pay-btn");
+  btn.textContent = "Processing...";
+  btn.style.background = "#888";
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const t = currentTherapist;
+    const desc = document.getElementById("pay-desc").textContent;
+    document.getElementById("pay-form-area").style.display = "none";
+    const successEl = document.getElementById("pay-success");
+    successEl.style.display = "block";
+    successEl.querySelector("div:first-child").textContent = "✅";
+    successEl.querySelector("div:first-child").style.fontSize = "2rem";
+    document.getElementById("pay-success-msg").textContent = "Your session with " + t.name + " has been confirmed!";
+    document.getElementById("booking-confirm-details").innerHTML =
+      "Therapist: " + t.name + "<br>" +
+      "Session: " + desc + "<br>" +
+      "Amount Paid: ₹" + (t.fee + 200).toLocaleString() + "<br>" +
+      "Booking ID: SRN-" + Math.random().toString(36).substring(2,8).toUpperCase() + "<br>" +
+      "Confirmation sent to: " + email;
+    showToast("Session booked successfully!", "🎉");
+    btn.disabled = false;
+    btn.textContent = "Pay";
+    btn.style.background = "#635bff";
+  }, 2200);
+}
+
+function openModal(id) {
+  const el = document.getElementById(id);
+  el.style.display = "flex";
+  setTimeout(() => { el.style.opacity = "1"; }, 10);
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+function submitCounsellorApp() {
+  showToast("Application submitted! We'll review and contact you within 48 hours. 💚", "✅");
+  closeModal("counsellor-modal");
+}
+
+// Close modals on backdrop click
+["booking-modal","payment-modal","counsellor-modal"].forEach(id => {
+  document.getElementById(id).addEventListener("click", function(e) {
+    if (e.target === this) closeModal(id);
+  });
+});
+
+renderTherapists("all");
+
 </script>
 </body>
 </html>
