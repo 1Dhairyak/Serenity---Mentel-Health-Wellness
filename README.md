@@ -135,7 +135,4 @@ B.Tech Final Year Project
 * Strong emphasis on **UI/UX design**
 * Demonstrates **product thinking + frontend skills**
 * Easily extendable with **AI and backend systems**
----
 
-If you want next level:
-I can make this **look like a top 1% GitHub README (with badges, screenshots, animations)** 🔥
