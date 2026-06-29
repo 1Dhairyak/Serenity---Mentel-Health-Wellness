@@ -76,23 +76,6 @@ User Interaction (Mood, Journal, Breathing, Quiz)
 * **Design:** Responsive UI, Animations, Dark Mode
 * **Storage:** Browser Local Storage
 
----
-
-## 📦 Installation
-
-```bash
-# Clone repository
-git clone https://github.com/1Dhairyak/Serenity---Mentel-Health-Wellness
-
-# Open project
-cd Serenity---Mentel-Health-Wellness
-
-# Run
-Open index.html in browser
-```
-
----
-
 ## 📸 Key Functional Areas
 
 * Mood tracking dashboard
