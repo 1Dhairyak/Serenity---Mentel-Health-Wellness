@@ -1,121 +1,114 @@
-Here’s a **clean, professional README** for your Serenity project (you can directly paste into GitHub):
-
----
-
 # 🌿 Serenity — Mental Health & Wellness Platform
 
-A user-friendly web application designed to support mental well-being through mood tracking, journaling, guided exercises, and self-reflection tools.
+A full-featured digital wellness companion for mood tracking, clinically-modeled mental health screening, guided breathing, reflective journaling, and crisis support — built with a focus on calm, accessible design and genuine self-awareness tools.
 
----
-
-## 🚀 Overview
-
-Serenity is a digital wellness companion that helps users:
-
-* Track their emotional state
-* Reflect through journaling
-* Practice guided breathing
-* Access mental health resources
-
-The platform focuses on **simplicity, accessibility, and a calming user experience** to promote daily mental wellness.
+**Live demo:** [github-pages link]
+**Stack:** HTML, CSS, JavaScript (vanilla) · LocalStorage for persistence
 
 ---
 
 ## ✨ Features
 
-### 😊 Mood Tracker
+### 📊 Mood Tracker
+- Daily mood logging with optional notes
+- Animated 7-day trend chart with mood-specific color coding
+- Streak tracking to encourage daily check-ins
+- Full mood history log with timestamps
 
-* Log daily moods with emojis
-* Visualize emotional patterns over time
-* Track consistency and mental trends
+### 🧪 Clinical Self-Assessments — PHQ-9 & GAD-7
+- Implements the **PHQ-9** (depression) and **GAD-7** (anxiety) screening tools used by clinicians worldwide
+- Real-time answered-question tracking and validated scoring logic
+- Automatic severity categorization (minimal → severe) with a visual severity-range breakdown
+- Personalized, severity-matched recommendations
+- Clear self-awareness disclaimer — not a diagnostic substitute for professional care
 
-### 📓 Journaling System
+### 🤖 Sage — AI Wellness Companion
+- Conversational chat widget with intent-detection across 12+ categories (anxiety, low mood, anger, sleep issues, gratitude, crisis language, and more)
+- Context-aware, empathetic response selection with natural typing-delay simulation
+- Quick-reply shortcuts and markdown-formatted responses
+- Built-in crisis-keyword detection that redirects to helpline resources
 
-* Write and save personal thoughts
-* View past entries
-* Encourages self-reflection and awareness
+### 📓 Guided Journal
+- Curated reflective writing prompts (gratitude, self-compassion, growth, intention-setting)
+- Live word count, autosave-style entry management, and a searchable saved-entries list
 
 ### 🧘 Guided Breathing Exercises
+- Three techniques: 4-7-8 (sleep/calm), Box Breathing (focus), 5-5 (everyday use)
+- Animated breathing circle with live phase countdown
+- Session stats: cycle count and total duration tracking
 
-* Interactive inhale–hold–exhale animations
-* Helps reduce stress and anxiety
+### 🩺 Find a Therapist
+- Filterable directory of mental health professionals by specialty (anxiety, depression, trauma)
+- Full booking flow: session type, date, and time-slot selection
+- Simulated end-to-end payment checkout with card formatting/validation and a booking confirmation receipt
 
-### 🧠 Wellness Quiz
+### 🆘 Crisis Support
+- Always-visible crisis helpline directory (iCall, Vandrevala Foundation, NIMHANS, emergency services)
+- A confidential "talk to someone" contact form with validation
 
-* Quick mental health assessment
-* Provides personalized feedback
-
-### 🚨 Crisis Support Section
-
-* Emergency help resources
-* Guidance for users in distress
-
-### 🎨 UI/UX Design
-
-* Clean, modern interface
-* Light/Dark mode support
-* Fully responsive design
+### 🎨 Design
+- Fully responsive layout (mobile, tablet, desktop)
+- Light/dark theme toggle with persisted preference
+- Scroll-triggered fade-in animations throughout
 
 ---
 
 ## 🏗️ Architecture
 
-```bash
+```
 Frontend (HTML, CSS, JavaScript)
         ↓
-Local Storage / State Management
+Component-style rendering (mood charts, assessments, chat, booking)
         ↓
-User Interaction (Mood, Journal, Breathing, Quiz)
+LocalStorage persistence layer (moods, journal entries, theme)
+        ↓
+Client-side rule engine (Sage chatbot intent matching, PHQ-9/GAD-7 scoring)
 ```
+
+No backend — all logic, scoring, and persistence run client-side.
 
 ---
 
 ## ⚙️ Tech Stack
 
-* **Frontend:** HTML, CSS, JavaScript
-* **Design:** Responsive UI, Animations, Dark Mode
-* **Storage:** Browser Local Storage
-
-## 📸 Key Functional Areas
-
-* Mood tracking dashboard
-* Journaling interface
-* Breathing exercise module
-* Wellness quiz system
-* Crisis support section
+| Layer | Technology |
+|---|---|
+| Structure | HTML5 |
+| Styling | CSS (custom properties, responsive grid/flexbox, animations) |
+| Logic | Vanilla JavaScript |
+| Persistence | Browser LocalStorage |
+| Fonts | DM Serif Display, Outfit (Google Fonts) |
 
 ---
 
 ## 🎯 Use Cases
 
-* Daily mental health tracking
-* Stress and anxiety management
-* Self-reflection and journaling
-* Personal wellness improvement
+- Daily mental health and mood tracking
+- Self-screening for anxiety/depression symptoms ahead of a doctor's visit
+- Guided stress and anxiety management
+- Reflective journaling and self-awareness building
+- Finding and booking a mental health professional
 
 ---
 
 ## 🔮 Future Enhancements
 
-* 🔐 User authentication system
-* ☁️ Cloud database (store user data)
-* 🤖 AI-based mood analysis
-* 📱 Mobile app version
-* 📊 Advanced analytics dashboard
+- 🔐 User authentication and account sync
+- ☁️ Backend + database for cross-device data persistence
+- 🤖 LLM-powered chatbot responses (replacing rule-based matching)
+- 💳 Real payment gateway integration for therapist bookings
+- 📱 Native mobile app
+- 📈 Advanced longitudinal mood/assessment analytics
 
 ---
 
 ## 👨‍💻 Author
 
-**Dhairya**
-B.Tech Final Year Project
+**Dhairya Kumar**
+B.Tech Final Year Project — Computer Science (Cloud Computing)
 
 ---
 
-## ⭐ Why This Project Matters
+## ⚠️ Disclaimer
 
-* Focuses on **real human problems (mental health)**
-* Strong emphasis on **UI/UX design**
-* Demonstrates **product thinking + frontend skills**
-* Easily extendable with **AI and backend systems**
-
+Serenity is a self-awareness and wellness tool, not a substitute for professional medical diagnosis or treatment. The PHQ-9 and GAD-7 assessments are screening instruments, not diagnostic tools. If you or someone you know is in crisis, please contact a crisis helpline or emergency services immediately.
